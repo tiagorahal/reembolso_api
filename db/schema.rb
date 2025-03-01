@@ -10,9 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_01_140744) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_01_150810) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "reembolso_tags", force: :cascade do |t|
+    t.bigint "reembolso_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reembolso_id"], name: "index_reembolso_tags_on_reembolso_id"
+    t.index ["tag_id"], name: "index_reembolso_tags_on_tag_id"
+  end
+
+  create_table "reembolsos", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "descricao"
+    t.decimal "valor"
+    t.date "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_reembolsos_on_user_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "nome"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((nome)::text)", name: "index_tags_on_lower_nome", unique: true
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -25,4 +51,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_01_140744) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "reembolso_tags", "reembolsos"
+  add_foreign_key "reembolso_tags", "tags"
+  add_foreign_key "reembolsos", "users"
 end
