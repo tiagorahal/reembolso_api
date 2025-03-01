@@ -35,6 +35,11 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+gem "devise_token_auth"
+
+gem "omniauth"
+gem "omniauth-oauth2"
+
 group :development, :test do
   # Debugging tools
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
