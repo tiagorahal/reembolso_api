@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Reembolso, type: :model do
-  let(:user) { create(:user) } 
+  let(:user) { create(:user) }
 
   subject { build(:reembolso, user: user) }
 
