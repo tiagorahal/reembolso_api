@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Reembolsos API", type: :request do
-  let(:user) { create(:user, password: "password123", confirmed_at: Time.now) } # Ensure user is confirmed
+  let(:user) { create(:user, password: "password123") }
   let(:auth_headers) do
     post "/auth/sign_in", params: { email: user.email, password: "password123" }
     response.headers.slice("client", "access-token", "uid")
