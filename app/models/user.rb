@@ -7,5 +7,5 @@ class User < ApplicationRecord
 
   validates :password, presence: true, if: -> { new_record? && encrypted_password.blank? }
 
-  has_many :reembolsos, dependent: :destroy 
+  has_many :reembolsos, dependent: :destroy
 end

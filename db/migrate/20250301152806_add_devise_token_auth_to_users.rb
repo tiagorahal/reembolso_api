@@ -9,7 +9,7 @@ class AddDeviseTokenAuthToUsers < ActiveRecord::Migration[8.0]
       t.json :tokens
 
       ## Indexes
-      t.index [:uid, :provider], unique: true
+      t.index [ :uid, :provider ], unique: true
     end
   end
 end
