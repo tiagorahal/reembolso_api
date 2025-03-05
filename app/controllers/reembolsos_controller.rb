@@ -21,11 +21,11 @@ class ReembolsosController < ApplicationController
         tags = tag_names.map { |tag_name| Tag.find_or_create_by(nome: tag_name.strip) }
         @reembolso.tags = tags
     
-        render json: @reembolso, status: :created
+        render json: @reembolso.as_json(include: :tags), status: :created
       else
         render json: { errors: @reembolso.errors.full_messages }, status: :unprocessable_entity
       end
-    end
+    end    
     
     def update
       @reembolso = current_user.reembolsos.find(params[:id])
