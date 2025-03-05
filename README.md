@@ -132,8 +132,6 @@ Now, you're ready to use the API! 🚀
 
 
 
-
-
 ## Authentication & API Usage
 
 This section provides step-by-step instructions on how to **create a user, log in, create a reembolso, check reembolsos, and log out** using **cURL**.
