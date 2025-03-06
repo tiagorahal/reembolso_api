@@ -418,6 +418,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   database_cleaner-active_record
+  database_cleaner-core (~> 2.0.1)
   debug
   devise (~> 4.9)
   devise_token_auth
