@@ -41,6 +41,8 @@ gem "omniauth"
 gem "omniauth-oauth2"
 
 group :development, :test do
+   gem 'database_cleaner-active_record'
+   
   # Debugging tools
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
 

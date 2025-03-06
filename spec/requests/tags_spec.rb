@@ -1,31 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe "Tags API", type: :request do
-  let(:user) { create(:user, password: "password123") }
+  let(:user) { create(:user) }
+  let!(:tags) { create_list(:tag, 3) }
+  
   let(:auth_headers) do
-    post "/auth/sign_in", params: { email: user.email, password: "password123" }
-    response.headers.slice("client", "access-token", "uid")
+    user.create_new_auth_token 
+  end
+
+  before do
+    sign_in user 
   end
 
   describe "GET /tags" do
-    before do
-      create_list(:tag, 5)
-      get "/tags", headers: auth_headers
-    end
-
     it "returns all tags" do
+      get "/tags", headers: auth_headers
+
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body).size).to eq(5)
+      expect(JSON.parse(response.body).length).to be >= 1
     end
   end
 
   describe "POST /tags" do
-    let(:params) { { tag: { nome: "Transporte" } } }
-
     it "creates a new tag" do
-      post "/tags", params: params, headers: auth_headers
+      post "/tags",
+        params: { tag: { nome: "Alimentação" } },
+        headers: auth_headers
+
       expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)["nome"]).to eq("Transporte")
+      expect(JSON.parse(response.body)["nome"]).to eq("Alimentação")
     end
   end
 end

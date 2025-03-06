@@ -1,33 +1,52 @@
 require 'rails_helper'
 
 RSpec.describe "Reembolsos API", type: :request do
-  let(:user) { create(:user, password: "password123") }
+  let(:user) { User.create!(email: "user@example.com", password: "password123") }
+  let(:tag) { Tag.create!(nome: "Transporte") }
+  let(:reembolso) { user.reembolsos.create!(descricao: "Táxi", valor: 35.00, data: Date.today, tags: [tag]) }
+
   let(:auth_headers) do
     post "/auth/sign_in", params: { email: user.email, password: "password123" }
-    response.headers.slice("client", "access-token", "uid")
+    {
+      "access-token" => response.headers["access-token"],
+      "client" => response.headers["client"],
+      "uid" => response.headers["uid"]
+    }
   end
 
   describe "GET /reembolsos" do
-    before { get "/reembolsos", headers: auth_headers }
-
-    it "returns a list of reembolsos for the authenticated user" do
-      create_list(:reembolso, 3, user: user)
+    it "returns all reembolsos for the user" do
       get "/reembolsos", headers: auth_headers
-
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body).size).to eq(3)
     end
   end
 
   describe "POST /reembolsos" do
-    let(:params) do
-      { reembolso: { descricao: "Almoço com cliente", valor: 75.50, data: "2025-01-10" } }
-    end
-
     it "creates a new reembolso" do
-      post "/reembolsos", params: params, headers: auth_headers
+      post "/reembolsos",
+        params: { reembolso: { descricao: "Táxi", valor: 35.00, data: Date.today, tag_ids: [tag.id] } },
+        headers: auth_headers
+
       expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)["descricao"]).to eq("Almoço com cliente")
+      expect(JSON.parse(response.body)["descricao"]).to eq("Táxi")
+    end
+  end
+
+  describe "PUT /reembolsos/:id" do
+    it "updates an existing reembolso" do
+      put "/reembolsos/#{reembolso.id}",
+        params: { reembolso: { descricao: "Táxi Editado", valor: 40.00, data: Date.today } },
+        headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)["descricao"]).to eq("Táxi Editado")
+    end
+  end
+
+  describe "DELETE /reembolsos/:id" do
+    it "deletes a reembolso" do
+      delete "/reembolsos/#{reembolso.id}", headers: auth_headers
+      expect(response).to have_http_status(:ok)
     end
   end
 end

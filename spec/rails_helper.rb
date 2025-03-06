@@ -8,6 +8,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
 require 'rspec/rails'
+require 'database_cleaner/active_record'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -32,47 +34,48 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 RSpec.configure do |config|
+  # Enable FactoryBot methods (e.g., create, build)
   config.include FactoryBot::Syntax::Methods
 
+  # Enable Devise test helpers for authentication
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Shoulda Matchers configuration
   Shoulda::Matchers.configure do |shoulda|
     shoulda.integrate do |with|
       with.test_framework :rspec
       with.library :rails
     end
   end
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_paths = [
-    Rails.root.join('spec/fixtures')
-  ]
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
+  # Use fixtures if needed
+  config.fixture_paths = [Rails.root.join('spec/fixtures')]
 
-  # You can uncomment this line to turn off ActiveRecord support entirely.
-  # config.use_active_record = false
+  # Infer spec type from file location (e.g., spec/models = :model)
+  config.infer_spec_type_from_file_location!
 
-  # RSpec Rails uses metadata to mix in different behaviours to your tests,
-  # for example enabling you to call `get` and `post` in request specs. e.g.:
-  #
-  #     RSpec.describe UsersController, type: :request do
-  #       # ...
-  #     end
-  #
-  # The different available types are documented in the features, such as in
-  # https://rspec.info/features/7-1/rspec-rails
-  #
-  # You can also this infer these behaviours automatically by location, e.g.
-  # /spec/models would pull in the same behaviour as `type: :model` but this
-  # behaviour is considered legacy and will be removed in a future version.
-  #
-  # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
+  # Clean up the database before running the test suite
+  config.before(:suite) do
+    DatabaseCleaner[:active_record].strategy = :transaction
+    DatabaseCleaner[:active_record].clean_with(:truncation)
+  end
 
-  # Filter lines from Rails gems in backtraces.
+  # Start DatabaseCleaner for each test
+  config.before(:each) do
+    DatabaseCleaner[:active_record].start
+  end
+
+  # Clean database after each test
+  config.after(:each) do
+    DatabaseCleaner[:active_record].clean
+  end
+
+  # Use transactions for tests to keep database clean
+  config.use_transactional_fixtures = false
+
+  # Filter lines from Rails gems in backtraces
   config.filter_rails_from_backtrace!
-  # arbitrary gems may also be filtered via:
-  # config.filter_gems_from_backtrace("gem name")
 end
+

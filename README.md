@@ -70,7 +70,19 @@ You can now follow the [Authentication & API Usage](#authentication--api-usage) 
 
 ---
 
-### **6️⃣ Stopping and Removing Containers**
+### **6️⃣ Running Tests**
+
+To run the automated tests, use the following command:
+
+```bash
+RAILS_ENV=test bundle exec rspec
+```
+
+This will execute all the RSpec tests and ensure that everything is working correctly.
+
+---
+
+### **7️⃣ Stopping and Removing Containers**
 
 To stop the running containers, use:
 
@@ -86,7 +98,7 @@ docker compose down --volumes
 
 ---
 
-### **7️⃣ Debugging & Logs**
+### **8️⃣ Debugging & Logs**
 
 To check the logs for the running containers:
 
@@ -108,7 +120,7 @@ docker compose restart web
 
 ---
 
-### **8️⃣ Rebuilding the Docker Containers**
+### **9️⃣ Rebuilding the Docker Containers**
 
 If you made changes to the Gemfile or other dependencies, rebuild the application with:
 
@@ -130,7 +142,7 @@ docker compose up --build -d
 
 Now, you're ready to use the API! 🚀
 
-
+---
 
 ## Authentication & API Usage
 
